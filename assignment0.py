@@ -64,6 +64,9 @@ def _main():
     # 5.
     from levenshtein import Levenshtein
 
+    lev1 = Levenshtein("Jack is a very nice boy, isn't he?", "jack is a very nice boy is he")
+    print lev1.distance()
+
 if __name__ == '__main__':
     _main()
 
