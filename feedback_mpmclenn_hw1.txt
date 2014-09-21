@@ -1,0 +1,5 @@
+IF ANY PROBLEMS FOR YOUR GRADE, YOU CAN EMAIL TO WC23 AT INDIANA.EDU
+
+
+Q7: -1
+Didn’t consider the depth=0 case and also didn’t follow the output fashion. 
