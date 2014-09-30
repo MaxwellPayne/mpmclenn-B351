@@ -1,5 +1,13 @@
 from itertools import chain
 
+# enum for types of moves
+class MOVES_T:
+    nil = '\0'
+    r = 'r'
+    l = 'l'
+    u = 'u'
+    d = 'd'
+
 class EightPuzzle(object):
     def __init__(self, nw, n, ne, w, c, e, sw, s, se, sure_cost=0, h_cost=float('inf')):
 
@@ -16,6 +24,8 @@ class EightPuzzle(object):
             if val == " ":
                 self._blank = i
                 break
+
+        self.last_move = MOVES_T.nil
 
     @property
     def state(self):
@@ -43,10 +53,10 @@ class EightPuzzle(object):
         return str(self)
 
     def __eq__(self, other):
-        return self.state == other.state
+            return isinstance(other, self.__class__) and self.state == other.state
 
     def __cmp__(self, other):
-        return cmp(self.priority, other.priority)
+        return cmp(self.priority, other.priority if isinstance(other, self.__class__) else None)
     
     def _shifted(self, swap_index):
         from time import sleep
@@ -95,3 +105,15 @@ class EightPuzzle(object):
             return None
         return self._shifted(self._blank + 3)
 
+    def backtrack(self):
+        mv = self.last_move
+        if mv == MOVES_T.r:
+            return self.left()
+        elif mv == MOVES_T.l:
+            return self.right()
+        elif mv == MOVES_T.u:
+            return self.down()
+        elif mv == MOVES_T.d:
+            return self.up()
+        elif mv == MOVES_T.nil:
+            return self
