@@ -1,7 +1,7 @@
 from itertools import chain
 
 class EightPuzzle(object):
-    def __init__(self, nw, n, ne, w, c, e, sw, s, se, sure_cost=float('inf'), h_cost=float('inf')):
+    def __init__(self, nw, n, ne, w, c, e, sw, s, se, sure_cost=0, h_cost=float('inf')):
 
         values = tuple((nw, n, ne, w, c, e, sw, s, se))
         if set(values) != set((1, 2, 3, 4, 5, 6, 7, 8, " ")):
@@ -30,12 +30,17 @@ class EightPuzzle(object):
 
     @property
     def is_solved(self):
+        #print 'inside is_solved'
         SOLVED_STRING = '12345678 '
-        return hash(self) == SOLVED_STRING
+        return hash(self) == hash(SOLVED_STRING)
 
     def __str__(self):
         stringified = ''.join(map(str, self._state))
-        return '\n'.join([stringified[i:i+3] for i in range(0, 9, 3)])
+        #return '\n'.join([stringified[i:i+3] for i in range(0, 9, 3)])
+        return stringified
+
+    def __repr__(self):
+        return str(self)
 
     def __eq__(self, other):
         return self.state == other.state
@@ -44,12 +49,31 @@ class EightPuzzle(object):
         return cmp(self.priority, other.priority)
     
     def _shifted(self, swap_index):
+        from time import sleep
+
         new_state = list(self._state)
+        """
+        print 'new_state'
+        print new_state[:3]
+        print new_state[3:6]
+        print new_state[6:]
+        """
 
         temp = new_state[swap_index]
-        new_state[swap_index] = " "
+        new_state[swap_index] = ' '
         new_state[self._blank] = temp
-        return self.__class__(*new_state, sure_cost=self.priority + 1)
+        """
+        print 'new_state now'
+        print new_state[:3]
+        print new_state[3:6]
+        print new_state[6:]
+        print
+        """
+        #sleep(1)
+        
+        #if new_state == [1, 2, 3, 4, 5, 6, 7, 8, ' ']: raise Exception('shifted error')
+        #new_state = [1, 2, 3, 4, 5, 6, 7, 8, ' ']
+        return self.__class__(*new_state, sure_cost=self.sure_cost + 1)
 
     def right(self):
         if self._blank % 3 == 2:
