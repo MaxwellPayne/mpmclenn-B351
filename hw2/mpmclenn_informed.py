@@ -1,21 +1,26 @@
+import collections
+import time
 from Queue import PriorityQueue
-from time import sleep
 
 from EightPuzzle import EightPuzzle, MOVES_T
 
 class AstarSolver(object):
-    def __init__(self, start_state, limit=float("inf"), heuristic=lambda node: 0, goal_state=EightPuzzle(1, 2, 3, 4, 5, 6, 7, 8, ' ')):
+    def __init__(self, start_state, limit=float("inf"), heuristic=lambda node, goal: 0, goal_state=EightPuzzle(1, 2, 3, 4, 5, 6, 7, 8, ' ')):
         self._start = start_state
         self.goal = goal_state
         self.limit = limit
 
-        self._frontier = PriorityQueue()
-        self._explored = {}
-        # don't have a heuristic, so any application of heuristic will do nothing
-        self._heuristic = heuristic
+        #self._frontier = PriorityQueue()
+        #self._explored = {}
+
+        if isinstance(heuristic, collections.Iterable):
+            # if multiple heuristics given, chain them together and sum the results
+            self.heuristic = lambda node, goal: reduce(lambda cost, heur_func: cost + heur_func(node, goal), heuristic, 0)
+        else:
+            # else there is only one heuristic, just use it
+            self.heuristic = heuristic
 
         self._start.last_move = MOVES_T.nil
-        self._frontier.put(self._start)
 
 
     def solve(self):
@@ -23,12 +28,15 @@ class AstarSolver(object):
         SEEN = set()
         SEEND = dict()
 
-        while not self._frontier.empty():
-            node = self._frontier.get()
+        frontier, explored = PriorityQueue(), dict()
+        frontier.put(self._start)
+
+        while not frontier.empty():
+            node = frontier.get()
             
             if node == self.goal:
                 # return the solution path
-                return self.retrace(node, self._explored)
+                return self.retrace(node, explored)
             
             # expand on the four directions
             attempts = (node.right(), node.left(), node.up(), node.down())
@@ -43,10 +51,10 @@ class AstarSolver(object):
 
 
                     # add the heuristic function to the priority cost
-                    heuristic_estimate = self._heuristic(attempt)
+                    heuristic_estimate = self.heuristic(attempt, self.goal)
                     attempt.h_cost = heuristic_estimate
                     
-                    old = self._explored[attempt] if attempt in self._explored else None
+                    old = explored[attempt] if attempt in explored else None
                     if old == attempt and attempt > old:
                         #print "found a worse way"
                         pass
@@ -57,16 +65,18 @@ class AstarSolver(object):
                         #print '%s found an old atp %s oldp %s' % (attempt, attempt.sure_cost, old.sure_cost)
                         if attempt < old or attempt.sure_cost < old.sure_cost:
                             # forget the old and remember the new attempt
-                            self._explored[attempt] = attempt
-                            self._frontier.put(attempt)
+                            explored[attempt] = attempt
+                            frontier.put(attempt)
                             del old
-                            raise Exception('HAVENT YET SEEN THE REWRITE IN ACTION')
-
+                            #raise Exception('HAVENT YET SEEN THE REWRITE IN ACTION')
+                            #print 'THE REWRITE IS HAPPENING'
+                            #time.sleep(0.5)
+                            
                     # never been here before
-                    elif attempt not in self._explored:
+                    elif attempt not in explored:
                         # add to the explored and place on the frontier
-                        self._explored[attempt] = attempt
-                        self._frontier.put(attempt)
+                        explored[attempt] = attempt
+                        frontier.put(attempt)
             
                     COUNTER += 1
                     SEEN.add(attempt)
@@ -93,6 +103,12 @@ class AstarSolver(object):
             print state
             state = explored[previous]
         return tuple(reversed(path))
+
+    def time_solution(self):
+        start = time.time()
+        solution = self.solve()
+        end = time.time()
+        return (solution, end - start)
 
 def _main():
     from random import shuffle

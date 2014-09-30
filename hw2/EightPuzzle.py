@@ -26,10 +26,16 @@ class EightPuzzle(object):
                 break
 
         self.last_move = MOVES_T.nil
+        # matrix-shaped representation of the state
+        self._matrix = (self._state[:3], self._state[3:6], self._state[6:])
 
     @property
     def state(self):
         return self._state
+
+    @property
+    def matrix(self):
+        return self._matrix
     
     @property
     def priority(self):
