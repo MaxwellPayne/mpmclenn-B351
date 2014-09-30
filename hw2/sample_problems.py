@@ -28,7 +28,7 @@ def testUninformedSearch(initialState, goalState, limit, timeit=False):
     searcher = UniformCostSolver(initialState, goal_state=goalState, limit=limit)
     if timeit:
         solution, time_elapsed = searcher.time_solution()
-        outputTimes(len(solution), time_elapsed, outfile_name='uninformedtimes.csv')
+        outputTimes(len(solution), time_elapsed, outfile_name='uninformed.csv')
         return solution
     else:
         return searcher.solve()
@@ -56,7 +56,7 @@ def testInformedSearch(initialState, goalState, limit, timeit=False):
 
     if timeit:
         solution, time_elapsed = searcher.time_solution()
-        outputTimes(len(solution), time_elapsed, outfile_name='informedtimes.csv')
+        outputTimes(len(solution), time_elapsed, outfile_name='informed.csv')
         return solution
     else:
         return searcher.solve()
@@ -87,7 +87,9 @@ def _main():
 
     if TIMEIT:
         open('output.txt', 'w').truncate()
-    
+        open('uninformed.csv', 'w').truncate()
+        open('informed.csv', 'w').truncate()
+
     print "Test 1 Uninformed %s" % \
         str(testUninformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT))
     print "Test 2 Uninformed %s" % \
