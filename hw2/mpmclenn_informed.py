@@ -3,12 +3,12 @@ from time import sleep
 
 from EightPuzzle import EightPuzzle, MOVES_T
 
-
-
 class AstarSolver(object):
+    def __init__(self, start_state, limit=float("inf"), heuristic=lambda node: 0, goal_state=EightPuzzle(1, 2, 3, 4, 5, 6, 7, 8, ' ')):
+        self._start = start_state
+        self.goal = goal_state
+        self.limit = limit
 
-    def __init__(self, nw, n, ne, w, c, e, sw, s, se, heuristic=lambda node: 0):
-        self._start = EightPuzzle(nw, n, ne, w, c, e, sw, s, se, sure_cost=0, h_cost=0)
         self._frontier = PriorityQueue()
         self._explored = {}
         # don't have a heuristic, so any application of heuristic will do nothing
@@ -26,7 +26,7 @@ class AstarSolver(object):
         while not self._frontier.empty():
             node = self._frontier.get()
             
-            if node.is_solved:
+            if node == self.goal:
                 # return the solution path
                 return self.retrace(node, self._explored)
             
@@ -34,6 +34,10 @@ class AstarSolver(object):
             attempts = (node.right(), node.left(), node.up(), node.down())
             for attempt, direction in zip(attempts, (MOVES_T.r, MOVES_T.l, MOVES_T.u, MOVES_T.d)):
                 if attempt:
+                    # limit expansion to self.limit
+                    if COUNTER > self.limit:
+                        return False
+                    
                     # be sure to note the direction that got us to attempt
                     attempt.last_move = direction
 
@@ -50,7 +54,7 @@ class AstarSolver(object):
                     # if there is not a better equal attempt already in explored
                     if old == attempt and (not attempt > old):
                         # if attempt has lower cost or (costs are equal and attempt has a smaller sure cost)
-                        print '%s found an old atp %s oldp %s' % (attempt, attempt.sure_cost, old.sure_cost)
+                        #print '%s found an old atp %s oldp %s' % (attempt, attempt.sure_cost, old.sure_cost)
                         if attempt < old or attempt.sure_cost < old.sure_cost:
                             # forget the old and remember the new attempt
                             self._explored[attempt] = attempt
@@ -67,6 +71,7 @@ class AstarSolver(object):
                     COUNTER += 1
                     SEEN.add(attempt)
                     SEEND[attempt] = None
+
 
         print 'FAILED'
         return False
@@ -96,7 +101,7 @@ def _main():
     
     puzzle = [3, 6, " ", 5, 7, 8, 2, 1, 4]
 
-    s = AstarSolver(*puzzle)
+    s = AstarSolver(EightPuzzle(*puzzle))
 
     s.solve()
 

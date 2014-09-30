@@ -9,7 +9,7 @@ class MOVES_T:
     d = 'd'
 
 class EightPuzzle(object):
-    def __init__(self, nw, n, ne, w, c, e, sw, s, se, sure_cost=0, h_cost=float('inf')):
+    def __init__(self, nw, n, ne, w, c, e, sw, s, se, sure_cost=0, h_cost=0):
 
         values = tuple((nw, n, ne, w, c, e, sw, s, se))
         if set(values) != set((1, 2, 3, 4, 5, 6, 7, 8, " ")):
@@ -37,12 +37,6 @@ class EightPuzzle(object):
 
     def __hash__(self):
         return hash(''.join(map(str, self._state)))
-
-    @property
-    def is_solved(self):
-        #print 'inside is_solved'
-        SOLVED_STRING = '12345678 '
-        return hash(self) == hash(SOLVED_STRING)
 
     def __str__(self):
         stringified = ''.join(map(str, self._state))
@@ -117,3 +111,9 @@ class EightPuzzle(object):
             return self.up()
         elif mv == MOVES_T.nil:
             return self
+
+
+def makeState(nw, n, ne, w, c, e, sw, s, se):
+    states = map(lambda t: ' ' if t == "blank" else t, (nw, n, ne, w, c, e, sw, s, se))
+    return EightPuzzle(*states)
+
