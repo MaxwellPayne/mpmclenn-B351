@@ -1,0 +1,21 @@
+Test 1 Uninformed ('l', 'd', 'd', 'r', 'r')
+Test 2 Uninformed ('r', 'd', 'r')
+Test 3 Uninformed ('u', 'l', 'd', 'd', 'r', 'u', 'r', 'd')
+Test 4 Uninformed ('r', 'r')
+Test 5 Uninformed ('d', 'r', 'u', 'l', 'd', 'd', 'r', 'r')
+Test 6 Uninformed ('l', 'u', 'r', 'd', 'l', 'd', 'r', 'r')
+Test 7 Uninformed ('u', 'r', 'd', 'l', 'd', 'l', 'u', 'r', 'u', 'l', 'd', 'd', 'r', 'r')
+Test 8 Uninformed ('l', 'l', 'd', 'd', 'r', 'r', 'u', 'u', 'l', 'l', 'd', 'd', 'r', 'u', 'u', 'l', 'd', 'd', 'r', 'r')
+ 
+ 
+ 
+ 
+ 
+Test 1 Informed 1 ('l', 'd', 'd', 'r', 'r')
+Test 2 Informed 1 ('r', 'd', 'r')
+Test 3 Informed 1 ('u', 'l', 'd', 'd', 'r', 'u', 'r', 'd')
+Test 4 Informed 1 ('r', 'r')
+Test 5 Informed 1 ('d', 'r', 'u', 'l', 'd', 'd', 'r', 'r')
+Test 6 Informed 1 ('l', 'u', 'r', 'd', 'l', 'd', 'r', 'r')
+Test 7 Informed 1 ('u', 'r', 'd', 'l', 'd', 'l', 'u', 'r', 'u', 'l', 'd', 'd', 'r', 'r')
+Test 8 Informed 1 ('l', 'l', 'd', 'd', 'r', 'r', 'u', 'u', 'l', 'l', 'd', 'd', 'r', 'u', 'u', 'l', 'd', 'd', 'r', 'r')

@@ -64,12 +64,17 @@ def _main(argv):
     
     #handles = [first_csv[0]] + ([second_csv[0]] if csv_count == 2 else [])
     # calculate legend based on csv_count; 2 csv's means two handles
-    plt.legend(loc=csv_count, handles=handles)
+    plt.legend(loc=0, handles=handles)
 
     #plotfile_name = filename_one + (' vs. ' + filename_two if filename_two else '')
     plotfile_name = ' vs. '.join((name for name in args.timefiles))
 
-    plt.savefig(plotfile_name.replace('.csv', '') + '.png')
+    if not os.path.exists('graphs'):
+        os.makedirs('graphs')
+
+    outfile_path = os.path.join('graphs', plotfile_name.replace('.csv', '') + '.png')
+
+    plt.savefig(outfile_path)
     plt.show()
 
 

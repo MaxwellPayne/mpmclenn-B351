@@ -39,6 +39,7 @@ class EightPuzzle(object):
     
     @property
     def priority(self):
+        # priority is the sum of known path and heuristic cost
         return self.sure_cost + self.h_cost
 
     def __hash__(self):
@@ -46,45 +47,32 @@ class EightPuzzle(object):
 
     def __str__(self):
         stringified = ''.join(map(str, self._state))
-        #return '\n'.join([stringified[i:i+3] for i in range(0, 9, 3)])
         return stringified
 
     def __repr__(self):
         return str(self)
 
     def __eq__(self, other):
-            return isinstance(other, self.__class__) and self.state == other.state
+        # two boards are equal if their states are the same
+        return isinstance(other, self.__class__) and self.state == other.state
 
     def __cmp__(self, other):
+        # EightPuzzle1 is < EightPuzzle2 if it has a lower priority
         return cmp(self.priority, other.priority if isinstance(other, self.__class__) else None)
     
     def _shifted(self, swap_index):
-        from time import sleep
-
+        # return a new instance with blank swapped at swap_index
         new_state = list(self._state)
-        """
-        print 'new_state'
-        print new_state[:3]
-        print new_state[3:6]
-        print new_state[6:]
-        """
 
         temp = new_state[swap_index]
         new_state[swap_index] = ' '
         new_state[self._blank] = temp
-        """
-        print 'new_state now'
-        print new_state[:3]
-        print new_state[3:6]
-        print new_state[6:]
-        print
-        """
-        #sleep(1)
-        
-        #if new_state == [1, 2, 3, 4, 5, 6, 7, 8, ' ']: raise Exception('shifted error')
-        #new_state = [1, 2, 3, 4, 5, 6, 7, 8, ' ']
+
         return self.__class__(*new_state, sure_cost=self.sure_cost + 1)
 
+    """right, left, up, and down return a new EightPuzzle with the blank
+    shifted in their direction if the blank can be shifted that direction,
+    otherwise they return None"""
     def right(self):
         if self._blank % 3 == 2:
             return None
@@ -106,6 +94,8 @@ class EightPuzzle(object):
         return self._shifted(self._blank + 3)
 
     def backtrack(self):
+        # return a new instance one move
+        # before the current state
         mv = self.last_move
         if mv == MOVES_T.r:
             return self.left()
@@ -118,8 +108,4 @@ class EightPuzzle(object):
         elif mv == MOVES_T.nil:
             return self
 
-
-def makeState(nw, n, ne, w, c, e, sw, s, se):
-    states = map(lambda t: ' ' if t == "blank" else t, (nw, n, ne, w, c, e, sw, s, se))
-    return EightPuzzle(*states)
 

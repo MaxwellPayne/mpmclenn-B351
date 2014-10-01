@@ -17,64 +17,11 @@ import csv
 import argparse
 import os
 
-from EightPuzzle import *
-from mpmclenn_uninformed import *
-from mpmclenn_informed import *
-
-def outputTimes(solution_len, time_elapsed, outfile_name='output.txt'):
-    with open(outfile_name, 'a') as outfile:
-        writer = csv.writer(outfile)
-        writer.writerow([solution_len, time_elapsed])
-
-def testUninformedSearch(initialState, goalState, limit, timeit=False):
-    searcher = UniformCostSolver(initialState, goal_state=goalState, limit=limit)
-    if timeit:
-        solution, time_elapsed = searcher.time_solution()
-        outputTimes(len(solution), time_elapsed, outfile_name='uninformed.csv')
-        return solution
-    else:
-        return searcher.solve()
-
-def testInformedSearch(initialState, goalState, limit, timeit=False, heur_names=None):
-
-    def sample_heuristic(current_node, goal_node):
-        # Calculates how far each tile is from its goal state, and sums those distances
-        current, goal = current_node.matrix, goal_node.matrix
-        sum = 0
-        for i in range(0, len(goal)):
-            for j in range(0, len(goal)):
-                tile = goal[i][j]
-                for k in range(0, len(current)):
-                    for l in range(0, len(current)):
-                        if current[k][l] == tile:
-                            sum += (k - i) * (k - i) + (j - l) * (j - l)
-        return sum
-
-
-    def hamming_distance(current_node, goal_node):
-        dist = 0
-        for current_tile, goal_tile in zip(current_node.state, goal_node.state):
-            if current_tile != goal_tile:
-                dist += 1
-        
-        return dist
-
-    function_mapping = {'hamming': hamming_distance, 'sample': sample_heuristic}
-    heuristics = (lambda c, g: 0,) if not heur_names else tuple((function_mapping[name] for name in heur_names))
-    searcher = AstarSolver(initialState, goal_state=goalState, limit=limit, heuristic=heuristics)
-
-    if timeit:
-        solution, time_elapsed = searcher.time_solution()
-        outfile_name = 'uninformed' if not heur_names else 'informed_' + '_'.join(sorted((name for name in heur_names)))
-        outfile_name += '.csv'
-        outputTimes(len(solution), time_elapsed, outfile_name=outfile_name)
-        return solution
-    else:
-        return searcher.solve()
+from testing_functions import *
 
 def _main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--use-heuristic', nargs='+', choices=('hamming', 'sample'), dest='heuristics')
+    parser.add_argument('--use-heuristic', nargs='+', choices=('hamming', 'sample'), dest='heuristics', default=('hamming', 'sample'))
     parser.add_argument('-t', action='store_true', dest='timeit', help='record runtime')
     args = parser.parse_args()
 
@@ -100,9 +47,11 @@ def _main():
     initialState8 = makeState(3, 6, "blank", 5, 7, 8, 2, 1, 4)
 
     TIMEIT = args.timeit
-
+    # record execution times if -t argument was passed
+    
     if TIMEIT:
-        open('output.txt', 'w').truncate()
+        # truncate existing time files if they will be
+        # overwritten by tests
         open('uninformed.csv', 'w').truncate()
         
         if 'hamming' in args.heuristics and 'sample' in args.heuristics:
@@ -128,8 +77,6 @@ def _main():
         str(testUninformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT))
     print "Test 8 Uninformed %s" % \
         str(testUninformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT))
-
-    #assert False
 
     print " "
     print " "
