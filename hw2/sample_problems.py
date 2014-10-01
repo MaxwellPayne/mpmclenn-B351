@@ -14,6 +14,8 @@
 # goal state, so it is possible that the actual optimal depth is much 
 # less than indicated for a particular example.
 import csv
+import argparse
+import os
 
 from EightPuzzle import *
 from mpmclenn_uninformed import *
@@ -33,8 +35,8 @@ def testUninformedSearch(initialState, goalState, limit, timeit=False):
     else:
         return searcher.solve()
 
-def testInformedSearch(initialState, goalState, limit, timeit=False):
-    
+def testInformedSearch(initialState, goalState, limit, timeit=False, heur_names=None):
+
     def sample_heuristic(current_node, goal_node):
         # Calculates how far each tile is from its goal state, and sums those distances
         current, goal = current_node.matrix, goal_node.matrix
@@ -49,19 +51,33 @@ def testInformedSearch(initialState, goalState, limit, timeit=False):
         return sum
 
 
+    def hamming_distance(current_node, goal_node):
+        dist = 0
+        for current_tile, goal_tile in zip(current_node.state, goal_node.state):
+            if current_tile != goal_tile:
+                dist += 1
+        
+        return dist
 
-    #raise NotImplementedError('informed search doesnt yet have heuristics')
-    heuristics = (sample_heuristic,)
+    function_mapping = {'hamming': hamming_distance, 'sample': sample_heuristic}
+    heuristics = (lambda c, g: 0,) if not heur_names else tuple((function_mapping[name] for name in heur_names))
     searcher = AstarSolver(initialState, goal_state=goalState, limit=limit, heuristic=heuristics)
 
     if timeit:
         solution, time_elapsed = searcher.time_solution()
-        outputTimes(len(solution), time_elapsed, outfile_name='informed.csv')
+        outfile_name = 'uninformed' if not heur_names else 'informed_' + '_'.join(sorted((name for name in heur_names)))
+        outfile_name += '.csv'
+        outputTimes(len(solution), time_elapsed, outfile_name=outfile_name)
         return solution
     else:
         return searcher.solve()
 
 def _main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--use-heuristic', nargs='+', choices=('hamming', 'sample'), dest='heuristics')
+    parser.add_argument('-t', action='store_true', dest='timeit', help='record runtime')
+    args = parser.parse_args()
+
     goalState = makeState(1, 2, 3, 4, 5, 6, 7, 8, "blank")
     
     # First group of test cases - should have solutions with depth <= 5
@@ -83,12 +99,18 @@ def _main():
     initialState7 = makeState(2, 6, 5, 4, "blank", 3, 7, 1, 8)
     initialState8 = makeState(3, 6, "blank", 5, 7, 8, 2, 1, 4)
 
-    TIMEIT = True
+    TIMEIT = args.timeit
 
     if TIMEIT:
         open('output.txt', 'w').truncate()
         open('uninformed.csv', 'w').truncate()
-        open('informed.csv', 'w').truncate()
+        
+        if 'hamming' in args.heuristics and 'sample' in args.heuristics:
+            open('informed_hamming_sample.csv', 'w').truncate()
+        elif 'hamming' in args.heuristics:
+            open('informed_hamming.csv', 'w').truncate()
+        elif 'sample' in args.heuristics:
+            open('informed_sample.csv', 'w').truncate()
 
     print "Test 1 Uninformed %s" % \
         str(testUninformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT))
@@ -116,21 +138,21 @@ def _main():
     print " "
     
     print "Test 1 Informed 1 %s" % \
-        str(testInformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 2 Informed 1 %s" % \
-        str(testInformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 3 Informed 1 %s" % \
-        str(testInformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 4 Informed 1 %s" % \
-        str(testInformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 5 Informed 1 %s" % \
-        str(testInformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 6 Informed 1 %s" % \
-        str(testInformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 7 Informed 1 %s" % \
-        str(testInformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
     print "Test 8 Informed 1 %s" % \
-        str(testInformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT))
+        str(testInformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
 
 if __name__ == '__main__':
     _main()

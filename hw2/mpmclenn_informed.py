@@ -83,7 +83,7 @@ class AstarSolver(object):
                     SEEND[attempt] = None
 
 
-        print 'FAILED'
+        #print 'FAILED'
         return False
     
     def retrace(self, state, explored):
@@ -100,7 +100,6 @@ class AstarSolver(object):
             # append the move taken by previous -> state
             # then backtrack from state to previous
             path.append(state.last_move)
-            print state
             state = explored[previous]
         return tuple(reversed(path))
 
