@@ -22,6 +22,8 @@ def testUninformedSearch(initialState, goalState, limit, timeit=False):
         outputTimes(len(solution), time_elapsed, outfile_name='uninformed.csv')
         return solution
     else:
+        #print "Test 1 Uninformed\n%s \n%s" % searcher.solve()
+        #exit(3)
         return searcher.solve()
 
 def testInformedSearch(initialState, goalState, limit, timeit=False, heur_names=('hamming', 'sample')):

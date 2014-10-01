@@ -61,22 +61,22 @@ def _main():
         elif 'sample' in args.heuristics:
             open('informed_sample.csv', 'w').truncate()
 
-    print "Test 1 Uninformed %s" % \
-        str(testUninformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT))
-    print "Test 2 Uninformed %s" % \
-        str(testUninformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT))
-    print "Test 3 Uninformed %s" % \
-        str(testUninformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT))
-    print "Test 4 Uninformed %s" % \
-        str(testUninformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT))
-    print "Test 5 Uninformed %s" % \
-        str(testUninformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT))
-    print "Test 6 Uninformed %s" % \
-        str(testUninformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT))
-    print "Test 7 Uninformed %s" % \
-        str(testUninformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT))
-    print "Test 8 Uninformed %s" % \
-        str(testUninformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT))
+    print "Test 1 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT)
+    print "Test 2 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT)
+    print "Test 3 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT)
+    print "Test 4 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT)
+    print "Test 5 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT)
+    print "Test 6 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT)
+    print "Test 7 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT)
+    print "Test 8 Uninformed\n%s \n%s" % \
+        testUninformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT)
 
     print " "
     print " "
@@ -84,22 +84,22 @@ def _main():
     print " "
     print " "
     
-    print "Test 1 Informed 1 %s" % \
-        str(testInformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 2 Informed 1 %s" % \
-        str(testInformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 3 Informed 1 %s" % \
-        str(testInformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 4 Informed 1 %s" % \
-        str(testInformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 5 Informed 1 %s" % \
-        str(testInformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 6 Informed 1 %s" % \
-        str(testInformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 7 Informed 1 %s" % \
-        str(testInformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
-    print "Test 8 Informed 1 %s" % \
-        str(testInformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics))
+    print "Test 1 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState1, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 2 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState2, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 3 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState3, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 4 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState4, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 5 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState5, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 6 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState6, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 7 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState7, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
+    print "Test 8 Informed 1\n%s \n%s" % \
+        testInformedSearch(initialState8, goalState, 10000000, timeit=TIMEIT, heur_names=args.heuristics)
 
 if __name__ == '__main__':
     _main()

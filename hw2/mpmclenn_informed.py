@@ -74,9 +74,10 @@ class AstarSolver(object):
     
     def retrace(self, state, explored):
         """Retraces the path from state back to start"""
-        path = []
+        path, states = [], []
         # can't move anymore if the move was nil
         while state.last_move != MOVES_T.nil:
+            states.append(state)
             # terminate if succesfully backtracked to start
             if state == self._start: break
 
@@ -88,7 +89,7 @@ class AstarSolver(object):
             # then backtrack from state to previous
             path.append(state.last_move)
             state = explored[previous]
-        return tuple(reversed(path))
+        return ( tuple(reversed(path)), '\n'.join(reversed(map(str, states))) )
 
     def time_solution(self):
         """Solve the puzzle, but also return the time elapsed"""
@@ -101,6 +102,8 @@ def _main():
     from random import shuffle
     puzzle = [1, 2, 3, 4, 5, 6, 7, 8, ' ']
     shuffle(puzzle)
+
+    puzzle = (2, 6, 5, 4, " ", 3, 7, 1, 8)
 
     s = AstarSolver(EightPuzzle(*puzzle))
 

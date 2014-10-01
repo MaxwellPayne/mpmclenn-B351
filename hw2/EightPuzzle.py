@@ -46,8 +46,7 @@ class EightPuzzle(object):
         return hash(''.join(map(str, self._state)))
 
     def __str__(self):
-        stringified = ''.join(map(str, self._state))
-        return stringified
+        return '\n'.join(map(lambda row: ', '.join(map(str, row)), self.matrix)) + '\n\n'
 
     def __repr__(self):
         return str(self)
