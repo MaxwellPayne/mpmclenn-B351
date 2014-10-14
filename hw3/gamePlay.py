@@ -174,25 +174,40 @@ if __name__ == "__main__":
 		print "Usage: python %s {-r} {-v} player1 player2" % (sys.argv[0])
 		exit()
 
-	verbose = False
+
+	verbose, numTrials, batchMode = False, 1, False
 	for (op,opVal) in optlist:
 		if (op == "-v"):
 			verbose = True
+		elif op == '-t':
+			numTrials, batchMode = int(opVal), True
+			
 	exec("from " + args[0] + " import nextMove")
 	p1 = nextMove
 	exec("from " + args[1] + " import nextMove")
 	p2 = nextMove
 
-	res = playGame(p1, p2, verbose)
-	printBoard(res[2])
-	if ((res[0] > res[1]) and reversed != "R") or ((res[0] < res[1]) and reversed == "R"):
-		print "%s Wins %s Loses (%d to %d)" %(args[0], args[1], res[0], res[1]),
-	elif ((res[0] < res[1]) and reversed != "R") or ((res[0] > res[1]) and reversed == "R"):
-		print "%s Wins %s Loses (%d to %d)" %(args[1], args[0], res[1], res[0]),
-	else:
-		print "TIE %s, %s, (%d to %d)" % (args[1], args[0], res[1], res[0])
-	if (len(res) == 4):
-		print res[3]
-	else:
-		print ""
+	scoreboard = {args[0]: 0, args[1]: 0} if batchMode else None
+	for trial in range(numTrials):
+
+		res = playGame(p1, p2, verbose)
+		printBoard(res[2])
+		if ((res[0] > res[1]) and reversed != "R") or ((res[0] < res[1]) and reversed == "R"):
+			print "%s Wins %s Loses (%d to %d)" %(args[0], args[1], res[0], res[1])
+			winner, loser = args[0], args[1]
+		elif ((res[0] < res[1]) and reversed != "R") or ((res[0] > res[1]) and reversed == "R"):
+			print "%s Wins %s Loses (%d to %d)" %(args[1], args[0], res[1], res[0])
+			winner, loser = args[1], args[0]
+		else:
+			print "TIE %s, %s, (%d to %d)" % (args[1], args[0], res[1], res[0])
+			winner, loser = None, None
+			if (len(res) == 4):
+				print res[3]
+			else:
+				print ""
+
+		if batchMode:
+			scoreboard[winner] += 1
+	if batchMode: 
+		print '\nBatch mode results: %s' % scoreboard
 	 
