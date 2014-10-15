@@ -48,20 +48,20 @@ def children(board, myColor):
                 alreadyYielded.add(move)
                 yield move
 
-def simpleHeuristic(board):
+def simpleHeuristic(board, myColor):
     value = 0
     for row in board:
         for elem in row:
-            if elem == "W":
+            if elem == opponent(myColor):
                 value = value + 1
-            elif elem == "B":
+            elif elem == myColor:
                 value = value - 1
     return value
 
 def alphabeta(board, color, depth, alpha, beta, moveMade, isMax):
     if depth == 0 or gameOver(board):
         #print 'bottomed out at %s' % str((simpleHeuristic(board), moveMade))
-        return (simpleHeuristic(board), moveMade)
+        return (simpleHeuristic(board, color), moveMade)
     if isMax:
         for movePos in children(board, color):
             childScore, childMove = alphabeta(childBoard(board, color, movePos), opponent(color), depth-1, alpha, beta, movePos, False)
@@ -79,21 +79,22 @@ def alphabeta(board, color, depth, alpha, beta, moveMade, isMax):
 
 
 def nextMove(boardState, color):
-    printBoard(boardState)
+    #printBoard(boardState)
     
 
     move = randomPlay.nextMove(boardState, color)
     TIMEOUT = float(2)
     start_time = time.time()
 
-    DEPTH = 0
-    #while time.time() - start_time < TIMEOUT:
-    for depth in xrange(6):
+    DEPTH = 6
+    # iterative deepening down to depth
+    # could be combined with a timeout to give progressively better moves
+    for depth in xrange(DEPTH):
         initAlpha, initBeta = ( float('-inf'), move ), ( float('inf'), move )
         move = alphabeta(boardState, color, depth, initAlpha, initBeta, move,  True)[1]
         
         
-    print 'nextMove is %s' % str(move)
+    #print 'nextMove is %s' % str(move)
     return move
 
 def _main():
