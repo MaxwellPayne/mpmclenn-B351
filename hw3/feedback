@@ -1,0 +1,9 @@
+100% good!
+
+5% bonus for your trying of multi-threading.
+    The effect of multithreading on depth may be trivial.
+
+
+    (if I misunderstand your codes, forget it)
+    I guess you try to explore as deeper as possible of the tree in limited time,
+    but multi-threading doesn't execute the the threads in order as the order you input.
