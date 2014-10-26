@@ -1,0 +1,30 @@
+Words that are verbs: is, went, ran, bought, go, have, be, make, see
+
+Words that are adverbs: quickly, loudly, easily
+
+Words that are pronouns: he, she, it, i, they, we, them, that
+
+Words that are nouns: time, food, item, place, store, essence
+
+Words that are adjectives: good, new, first, big, old, last, brobdingnagian
+
+Words that are prepositions: to, of, in, for, with, on, up
+
+Words that are determiners: the, a, an, no, that
+________________________________________________
+
+1. The beginning of a sentence can either be a pronoun or a noun
+
+2. Adverbs will always go after a verb
+
+3. Adjectives can go before a noun, before a pronoun, before an adjective, or after a verb
+
+4. Determiners will always go before a noun or before a pronoun
+
+5. Nouns can go before a verb or they can go after a preposition that is followed by a determiner 
+
+6. Pronouns can go before a verb or they can go after a preposition that is followed by a determiner 
+
+7. Verbs will always go after a noun or a pronoun
+
+8. Prepositions can follow a verb
