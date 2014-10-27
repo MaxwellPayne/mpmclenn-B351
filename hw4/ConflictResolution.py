@@ -15,6 +15,12 @@ def groupTags(workingMemory):
         # remove duplicates
         taggedWords[word] = list(set(taggedWords[word]))
 
+    tokenWords = ("BEGIN_SENTENCE", "END_SENTENCE")
+    # if system tagged token words, forget them
+    for token in tokenWords:
+        if token in taggedWords:
+            del taggedWords[token]
+
     return taggedWords
 
 def resolve(taggedSentence):

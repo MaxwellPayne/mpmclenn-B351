@@ -1,13 +1,9 @@
 import re
 
-import ConflictResolution
+import ConflictResolution, KnownLexicon
 from InferenceEngine import *
 from Tools import *
 
-ALL_PREPOSITIONS = set()
-with open('allprepositions.txt', 'r') as f:
-    for preposition in f:
-        ALL_PREPOSITIONS.add(preposition.rstrip())
 
 class RuleBasedSystem:
     ###
@@ -96,8 +92,14 @@ def applyRelationship1(rules):
     rules.append(beginRule)
 
 def applyRelationship5and6(rules):
-    nounTypesBeforeVerbRules = ORConsequent("NountypeBeforeVerb", "?word1 = *", ("Noun", "Pronoun"), ["?word1 precedes ?word2", "?word2 = Verb"], [])
+    # Note: removed pronoun from following
+    nounTypesBeforeVerbRules = ORConsequent("NountypeBeforeVerb", "?word1 = *", ("Noun",), ["?word1 precedes ?word2", "?word2 = Verb"], [])
     for rule in nounTypesBeforeVerbRules:
+        rules.append(rule)
+
+    # Note: removed pronoun from following
+    nounTypeAfter_PrepDeterminer = ORConsequent("NountypeAfterPrepDeterminer", "?objectNoun = *", ("Noun",), ["?aPreposition precedes ?aDeterminer", "?aPreposition = Preposition", "?aDeterminer = Determiner", "?aDeterminer precedes ?objectNoun"], [])
+    for rule in nounTypeAfter_PrepDeterminer:
         rules.append(rule)
 
 def applyRelationship7(rules):
@@ -107,7 +109,25 @@ def applyRelationship7(rules):
 
 def applyRelationship2(rules):
     adverbAfterVerbRule = Rule("AdverbAfterVerb-Tag", ["?word1 precedes ?word2", "?word1 = Verb"], ["?word2 = Adverb"])
-    rules.append(adverbAfterVerbRule)
+    #rules.append(adverbAfterVerbRule)
+
+def applyRelationship8(rules):
+    prepositionsAfterVerbRule = Rule("PrepositionAfterVerb-Tag", ["?word1 precedes ?word2", "?word1 = Verb"], ["?word2 = Preposition"])
+    #rules.append(prepositionsAfterVerbRule)
+
+def applyRelationship4(rules):
+    determinersBeforeNountypeRules = ORAntecedent("DeterminerAfter", "?word1 = *", ("Noun", "Pronoun"), ["?word1 precedes ?word2"], ["?word2 = Determiner"])
+    for rule in determinersBeforeNountypeRules:
+        #rules.append(rule)
+        pass
+
+def applyRelationship3(rules):
+    adjectivesBeforeRules = ORAntecedent("AdjectivesBefore", "?followingAdj = *", ("Noun", "Pronoun", "Adjective"), ["?adj precedes ?followingAdj"], ["?adj = Adjective"])
+    for rule in adjectivesBeforeRules:
+        rules.append(rule)
+
+    adjectivesAfterVerbRule = Rule("AdjectiveAfterVerb-Tag", ["?aVerb precedes ?adj", "?aVerb = Verb"], ["?adj = Adjective"])
+    rules.append(adjectivesAfterVerbRule)
 
 def sanitizedSentence(inputSentence):
     inputSentence = inputSentence.lower()
@@ -132,24 +152,30 @@ def tagSentence(sentence):
     # all the _ preceeds _ relationships
     whatPrecedesAndFollowsFacts = inferPrecedesAndFollows(sentence)
     
-    """
-    DO THIS IN ResolveConflicts
+    
     # classify known prepositions
-    knownPrepositionFacts = [word + ' = Preposition' for word in sentence if word in ALL_PREPOSITIONS]
+    knownPrepositionFacts = [word + ' = Preposition' for word in sentence if KnownLexicon.isPreposition(word)]
+
+    # classify known determiners
+    knownDeterminerFacts = [word + ' = Determiner' for word in sentence if KnownLexicon.isDeterminer(word)]
+
+    # classify known pronouns
+    knownPronounFacts = [word + ' = Pronoun' for word in sentence if KnownLexicon.isPronoun(word)]
+
     # classify -ly adjectives
     ly_AdjectiveFacts = [word + ' = Adjective' for word in sentence if re.search(r'ly$', word)]
 
 
-    memory = whatPrecedesAndFollowsFacts + knownPrepositionFacts + ly_AdjectiveFacts
-    """
-    memory = whatPrecedesAndFollowsFacts
+    memory = whatPrecedesAndFollowsFacts + knownPrepositionFacts + knownDeterminerFacts + knownPronounFacts + ly_AdjectiveFacts
 
     applyRelationship1(Rules)
     applyRelationship2(Rules)
-    applyRelationship7(Rules)
+    applyRelationship3(Rules)
+    applyRelationship4(Rules)
     applyRelationship5and6(Rules)
+    applyRelationship7(Rules)    
+    applyRelationship8(Rules)    
 
-    
     #print memory
 
     system = RuleBasedSystem(Rules, memory)
