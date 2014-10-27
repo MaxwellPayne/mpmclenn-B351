@@ -1,5 +1,6 @@
 import re
 
+import ConflictResolution
 from InferenceEngine import *
 from Tools import *
 
@@ -47,11 +48,12 @@ class Rule:
         self.antecedentList = [parseStringToArray(x) for x in self.antecedents]
         self.consequentList = [parseStringToArray(x) for x in self.consequents]
 
-def inferPrecedes(sentenceArray):
+def inferPrecedesAndFollows(sentenceArray):
     """Return knowledge of which words precede which"""
     newSentence = []
     for preceding, proceeding in zip(sentenceArray, sentenceArray[1:]):
-        newSentence.append(preceding + " precedes " + proceeding)
+        newSentence.append(preceding + ' precedes ' + proceeding)
+        newSentence.append(proceeding + ' follows ' + preceding)
 
     return newSentence
 
@@ -66,21 +68,46 @@ def ORAntecedent(name, ruleString, partsOfSpeech, antecedents, consequents):
         ruleName = name + partOfSpeech + '-Tag'
         OR_edRules.append(Rule(ruleName, antecedents + [newAntecedent], consequents))
 
+    return OR_edRules
+
+def ORConsequent(name, ruleString, partsOfSpeech, antecedents, consequents):
+    """Same thing as ORAntecedent, only creates a generic consequent"""
+    OR_edRules = []
+    
+    for partOfSpeech in partsOfSpeech:
+        newConsequent = ruleString.replace('*', partOfSpeech)
+        ruleName = name + partOfSpeech + '-Tag'
+        OR_edRules.append(Rule(ruleName, antecedents, consequents + [newConsequent]))
 
     return OR_edRules
+"""
+Possible (ascending) Order of Complexity:
+1.
+7.
+2.
+8.
+5. 6.
+4.
+3.
+"""
 
 def applyRelationship1(rules):
     beginRule = Rule("BeginSentence-Tag", ["BEGIN_SENTENCE precedes ?word"], ["?word = Noun", "?word = Pronoun"])
     rules.append(beginRule)
-    
+
+def applyRelationship5and6(rules):
+    nounTypesBeforeVerbRules = ORConsequent("NountypeBeforeVerb", "?word1 = *", ("Noun", "Pronoun"), ["?word1 precedes ?word2", "?word2 = Verb"], [])
+    for rule in nounTypesBeforeVerbRules:
+        rules.append(rule)
+
 def applyRelationship7(rules):
-    verbsAfterNounTypesRules = ORAntecedent("BeforeVerb", "?word1 = *", ("Noun", "Pronoun"), ["?word1 precedes ?word2"], ["?word2 = Verb"])    
+    verbsAfterNounTypesRules = ORAntecedent("VerbAfterNountype", "?word1 = *", ("Noun", "Pronoun"), ["?word1 precedes ?word2"], ["?word2 = Verb"])    
     for rule in verbsAfterNounTypesRules:
         rules.append(rule)
 
-def resolveConflicts(memory):
-    """Settle disputes when a word is tagged more than once"""
-    pass
+def applyRelationship2(rules):
+    adverbAfterVerbRule = Rule("AdverbAfterVerb-Tag", ["?word1 precedes ?word2", "?word1 = Verb"], ["?word2 = Adverb"])
+    rules.append(adverbAfterVerbRule)
 
 def sanitizedSentence(inputSentence):
     inputSentence = inputSentence.lower()
@@ -102,24 +129,37 @@ def tagSentence(sentence):
     Rules = []
     sentence = parseStringToArray("BEGIN_SENTENCE " + sentence + " END_SENTENCE")
     
-
-    whatPrecedesWhatFacts = inferPrecedes(sentence)
+    # all the _ preceeds _ relationships
+    whatPrecedesAndFollowsFacts = inferPrecedesAndFollows(sentence)
+    
+    """
+    DO THIS IN ResolveConflicts
+    # classify known prepositions
     knownPrepositionFacts = [word + ' = Preposition' for word in sentence if word in ALL_PREPOSITIONS]
+    # classify -ly adjectives
+    ly_AdjectiveFacts = [word + ' = Adjective' for word in sentence if re.search(r'ly$', word)]
 
-    memory = whatPrecedesWhatFacts + knownPrepositionFacts
 
+    memory = whatPrecedesAndFollowsFacts + knownPrepositionFacts + ly_AdjectiveFacts
+    """
+    memory = whatPrecedesAndFollowsFacts
 
     applyRelationship1(Rules)
+    applyRelationship2(Rules)
     applyRelationship7(Rules)
+    applyRelationship5and6(Rules)
 
     
     #print memory
 
     system = RuleBasedSystem(Rules, memory)
     system.generateInferences()
+    print ConflictResolution.groupTags(system.workingMemory)
     return system.workingMemory
     
 if __name__ == '__main__':
     print('Enter a sentence for the system to tag:')
     inputSentence = raw_input()
     print sanitizedSentence(inputSentence)
+
+
